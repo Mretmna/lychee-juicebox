@@ -11,17 +11,12 @@ This is a **parent repository**. It pins two independent Git repositories as sub
 
 ## At a glance
 
-```mermaid
-flowchart LR
-    V[Visitor] --> W[Next.js frontend]
-    W -->|selected PNG or GeoJSON validation| M[Map API · FastAPI]
-    W -->|image analysis + WAV generation| S[Sound API · FastAPI + STRAUSS]
-    W -->|bundled maps, videos, track JSON| A[Static assets]
-    O[Offline data preparation] --> A
-    M -. optional saved uploads .-> G[Local files or Cloud Storage]
-    S -->|WAV + color timeline| W
-    W -->|HTML audio, scan marker, DJ mode, Tone.js option| V
-```
+| Step | Component | What happens |
+| --- | --- | --- |
+| 1. Choose | Next.js frontend | Select a map or video frame and an area to hear. |
+| 2. Prepare | Browser and map API | Crop the image; validate uploads or resolve a city when needed. |
+| 3. Sonify | FastAPI sound API + STRAUSS | Analyze image colors and render a WAV with a color timeline. |
+| 4. Explore | Next.js frontend | Play the sound, follow the scan marker, or use DJ and Tone.js modes. |
 
 1. The browser reads a built-in Earth image, an animation frame, or a user-supplied global map.
 2. It selects a circle, square, or the entire map using latitude, longitude, and radius.

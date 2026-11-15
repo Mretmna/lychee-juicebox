@@ -1,0 +1,6 @@
+[submodule "web-and-map-api"]
+	path = web-and-map-api
+	url = https://github.com/Mretmna/team-lychee-nasaspaceapps-27.git
+[submodule "sound-api"]
+	path = sound-api
+	url = https://github.com/Mretmna/team-lychee-nasaspaceapps-backend-27.git

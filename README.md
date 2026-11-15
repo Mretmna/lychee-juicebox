@@ -11,12 +11,13 @@ This is a **parent repository**. It pins two independent Git repositories as sub
 
 ## At a glance
 
-| Step | Component | What happens |
-| --- | --- | --- |
-| 1. Choose | Next.js frontend | Select a map or video frame and an area to hear. |
-| 2. Prepare | Browser and map API | Crop the image; validate uploads or resolve a city when needed. |
-| 3. Sonify | FastAPI sound API + STRAUSS | Analyze image colors and render a WAV with a color timeline. |
-| 4. Explore | Next.js frontend | Play the sound, follow the scan marker, or use DJ and Tone.js modes. |
+```mermaid
+flowchart TD
+    A["Map or video frame"] --> B["Next.js: select and crop"]
+    B --> C["Sound API: analyze and render WAV"]
+    C --> D["Next.js: play and explore"]
+    B -.-> E["Map API: uploads and city search"]
+```
 
 1. The browser reads a built-in Earth image, an animation frame, or a user-supplied global map.
 2. It selects a circle, square, or the entire map using latitude, longitude, and radius.

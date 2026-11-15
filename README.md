@@ -13,19 +13,29 @@ This is a **parent repository**. It pins two independent Git repositories as sub
 
 ```mermaid
 flowchart TD
-    A["Map or video frame"] --> B["Next.js: select and crop"]
-    B --> C["Sound API: analyze and render WAV"]
-    C --> D["Next.js: play and explore"]
-    B -.-> E["Map API: uploads and city search"]
+    O["Offline video preparation"] --> A["Bundled maps, videos, and track JSON"]
+    A --> F["Next.js browser UI"]
+    U["Uploaded PNG or JPEG map"] --> F
+    F --> C["Choose area and crop image in browser"]
+    C --> P["Next.js API rewrites"]
+    P --> S["Sound API: analyze and sonify"]
+    P -.-> M["Map API: upload checks and city lookup"]
+    M -.-> L["Optional local or cloud storage"]
+    S --> I["OpenCV: 48 by 12 image samples"]
+    I --> T["STRAUSS: voices, template, spatial audio"]
+    T --> W["WAV and color timeline"]
+    W --> B["Browser: audio, scan marker, color bars"]
+    B --> D["Optional DJ mode and Tone.js playback"]
 ```
 
-1. The browser reads a built-in Earth image, an animation frame, or a user-supplied global map.
-2. It selects a circle, square, or the entire map using latitude, longitude, and radius.
-3. The map API validates prepared uploads and can resolve cities or store maps. Built-in map crops are prepared in the browser.
-4. The sound API scans the selected image into 48 positions × 12 bands, maps color and brightness to four synthesized voices, and returns a complete WAV file.
-5. The frontend plays that WAV while moving the visible scan marker. Optional DJ mode scrubs short audible samples; optional Tone.js playback resynthesizes notes from the WAV in the browser.
+1. **Sources:** The Next.js app serves bundled Earth images, two videos and their track JSON. An offline preparation script created the ocean video features. Visitors can also upload a PNG/JPEG global map or GeoJSON points; the points appear as locations rather than becoming sound themselves.
+2. **Selection:** In the browser, the visitor chooses a map, place, circle/square/full-map area, scan path, sound template, Normal/3D/8D listening mode and duration. Canvas code crops the selected image. For an animated choice, it crops the first video frame for the sound request.
+3. **Map service:** A separate FastAPI map API validates prepared uploads and resolves city names. Its map-storage endpoint can use local files or optional Cloud Storage, but the current dashboard does not call that storage endpoint. Saved areas and accessibility preferences stay in the visitor's browser.
+4. **Sound service:** By default, the browser reaches a separate FastAPI sound API through Next.js rewrites. `GET /templates` fills the chooser; `POST /analyze` returns the color-voice timeline; `POST /sonify` returns the finished WAV. The analysis graph has a browser fallback, but audible playback requires the WAV response.
+5. **Synthesis:** The sound API validates and decodes the selected image, samples it at **48 scan positions × 12 bands**, and maps brightness, hue, saturation and band position to four synthesized voices. STRAUSS renders the chosen palette with optional spatial stereo; 8D adds a moving headphone effect. The API returns 16-bit PCM audio at 22,050 Hz.
+6. **Playback:** The frontend plays the WAV while synchronizing the visible scan marker, video display and color bars to playback time. DJ mode scrubs the audio; an optional Tone.js mode reinterprets the WAV as instruments in the browser.
 
-**Animated-map detail:** the current sound is generated from the **first selected video frame**. The video moves in sync with playback, but its full frame-feature timeline does not currently drive the active sound renderer. See [Architecture](docs/ARCHITECTURE.md#animated-map-behavior).
+The parent repository only pins the two child repositories and documents them; it is not a runtime service. The map and sound APIs are separate processes. The moving video does **not** continuously generate new audio from every frame: the current sound represents its first selected frame. See [Architecture](docs/ARCHITECTURE.md) for request timing, state, storage and failure behavior.
 
 ## Documentation
 
